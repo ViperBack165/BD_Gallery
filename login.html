@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --glass-bg: rgba(255,255,255,0.18);
+      --glass-border: rgba(255,255,255,0.35);
+      --glass-blur: blur(18px);
+      --text-dark: #1a1a2e;
+      --text-mid: #3a3a5c;
+      --input-bg: rgba(255,255,255,0.45);
+      --input-border: rgba(255,255,255,0.6);
+      --btn-bg: rgba(80,90,120,0.75);
+      --btn-hover: rgba(60,70,100,0.9);
+      --shadow: 0 8px 48px rgba(30,40,80,0.18);
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Jost', sans-serif;
+      background: #a8b8d0;
+      overflow: hidden;
+    }
+
+    .bg {
+      position: fixed;
+      inset: 0;
+      background-image: url('Login_bg_.jpeg');
+      background-size: cover;
+      background-position: center top;
+      z-index: 0;
+    }
+
+    /* subtle vignette */
+    .bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, transparent 40%, rgba(10,15,40,0.35) 100%);
+    }
+
+    .card-wrap {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 420px;
+      padding: 20px;
+    }
+
+    .card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border-radius: 24px;
+      padding: 44px 40px 36px;
+      box-shadow: var(--shadow);
+      transition: all 0.5s cubic-bezier(.77,0,.175,1);
+    }
+
+    /* ── title ── */
+    .title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: 2rem;
+      color: var(--text-dark);
+      text-align: center;
+      letter-spacing: 0.01em;
+      margin-bottom: 32px;
+      line-height: 1.2;
+      transition: opacity 0.3s ease;
+    }
+
+    /* ── fields ── */
+    .fields {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .field {
+      position: relative;
+      display: flex;
+      align-items: center;
+      animation: slideUp 0.4s ease both;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .field input {
+      width: 100%;
+      padding: 14px 18px;
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: 12px;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 300;
+      color: var(--text-dark);
+      outline: none;
+      transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
+      backdrop-filter: blur(6px);
+    }
+
+    .field input::placeholder { color: rgba(40,40,80,0.45); }
+
+    .field input:focus {
+      border-color: rgba(120,140,200,0.7);
+      background: rgba(255,255,255,0.6);
+      box-shadow: 0 0 0 3px rgba(130,150,210,0.15);
+    }
+
+    .field .eye-btn {
+      position: absolute;
+      right: 14px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: rgba(60,60,100,0.5);
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      transition: color 0.2s;
+    }
+    .field .eye-btn:hover { color: rgba(60,60,100,0.85); }
+
+    /* ── meta row ── */
+    .meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 4px;
+      font-size: 0.82rem;
+      color: var(--text-mid);
+      transition: opacity 0.3s ease, max-height 0.3s ease;
+      overflow: hidden;
+    }
+
+    .remember {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .remember input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border: 1.5px solid rgba(80,80,140,0.4);
+      border-radius: 4px;
+      background: rgba(255,255,255,0.5);
+      cursor: pointer;
+      position: relative;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .remember input[type="checkbox"]:checked {
+      background: rgba(80,90,140,0.7);
+      border-color: rgba(80,90,140,0.8);
+    }
+    .remember input[type="checkbox"]:checked::after {
+      content: '';
+      position: absolute;
+      top: 2px; left: 4px;
+      width: 5px; height: 8px;
+      border: 2px solid #fff;
+      border-top: none; border-left: none;
+      transform: rotate(45deg);
+    }
+
+    .forgot {
+      color: var(--text-mid);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      cursor: pointer;
+      transition: color 0.2s;
+      background: none; border: none; font-family: 'Jost', sans-serif; font-size: 0.82rem;
+    }
+    .forgot:hover { color: var(--text-dark); }
+
+    /* ── main button ── */
+    .btn-main {
+      margin-top: 20px;
+      width: 100%;
+      padding: 15px;
+      background: var(--btn-bg);
+      border: none;
+      border-radius: 50px;
+      color: #fff;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.25s, transform 0.15s, box-shadow 0.25s;
+      box-shadow: 0 4px 20px rgba(50,60,100,0.25);
+    }
+    .btn-main:hover {
+      background: var(--btn-hover);
+      box-shadow: 0 6px 28px rgba(50,60,100,0.35);
+    }
+    .btn-main:active { transform: scale(0.98); }
+
+    /* ── switch link ── */
+    .switch-link {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.82rem;
+      color: var(--text-mid);
+    }
+    .switch-link button {
+      background: none;
+      border: none;
+      color: var(--text-dark);
+      font-family: 'Jost', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 500;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .switch-link button:hover { opacity: 0.7; }
+
+    /* ── divider ── */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 20px 0 0;
+      color: rgba(60,60,100,0.4);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(100,110,160,0.2);
+    }
+
+    /* ── password strength ── */
+    .strength-bar {
+      display: none;
+      height: 3px;
+      border-radius: 2px;
+      background: rgba(200,200,220,0.3);
+      margin-top: -6px;
+      overflow: hidden;
+    }
+    .strength-bar .fill {
+      height: 100%;
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.4s ease, background 0.4s ease;
+    }
+    .strength-bar.visible { display: block; }
+
+    /* ── animations for mode switch ── */
+    .card.switching { opacity: 0; transform: scale(0.97); }
+    .card.ready     { opacity: 1; transform: scale(1); transition: opacity 0.4s ease, transform 0.4s ease; }
+
+    @media (max-width: 480px) {
+      .card { padding: 36px 26px 28px; }
+      .title { font-size: 1.7rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg"></div>
+
+<div class="card-wrap">
+  <div class="card ready" id="card">
+
+    <!-- LOGIN MODE -->
+    <div id="login-view">
+      <h1 class="title">Log into your account</h1>
+      <div class="fields" id="login-fields">
+        <div class="field" style="animation-delay:0.05s">
+          <input type="email" id="login-email" placeholder="your email" autocomplete="email"/>
+        </div>
+        <div class="field" style="animation-delay:0.1s">
+          <input type="password" id="login-pass" placeholder="your password" autocomplete="current-password"/>
+          <button class="eye-btn" onclick="togglePw('login-pass',this)" tabindex="-1" aria-label="Toggle password">
+            <svg id="eye-icon-login" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="meta" id="meta-row">
+        <label class="remember">
+          <input type="checkbox"/> remember me
+        </label>
+        <button class="forgot">forgot password</button>
+      </div>
+
+      <button class="btn-main" onclick="handleLogin()">Log In</button>
+
+      <div class="switch-link">
+        don't have an account yet?&nbsp;
+        <button onclick="switchTo('register')">register</button>
+      </div>
+    </div>
+
+    <!-- REGISTER MODE -->
+    <div id="register-view" style="display:none">
+      <h1 class="title">Create an account</h1>
+      <div class="fields">
+        <div class="field" style="animation-delay:0.04s">
+          <input type="text" id="reg-name" placeholder="your name" autocomplete="name"/>
+        </div>
+        <div class="field" style="animation-delay:0.08s">
+          <input type="email" id="reg-email" placeholder="your email" autocomplete="email"/>
+        </div>
+        <div class="field" style="animation-delay:0.12s">
+          <input type="password" id="reg-pass" placeholder="password" autocomplete="new-password"
+                 oninput="checkStrength(this.value)"/>
+          <button class="eye-btn" onclick="togglePw('reg-pass',this)" tabindex="-1" aria-label="Toggle password">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+        <div class="strength-bar" id="strength-bar"><div class="fill" id="strength-fill"></div></div>
+        <div class="field" style="animation-delay:0.16s">
+          <input type="password" id="reg-pass2" placeholder="re-type password" autocomplete="new-password"/>
+          <button class="eye-btn" onclick="togglePw('reg-pass2',this)" tabindex="-1" aria-label="Toggle password">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <button class="btn-main" onclick="handleRegister()">Create Account</button>
+
+      <div class="switch-link">
+        already have an account?&nbsp;
+        <button onclick="switchTo('login')">sign in</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  /* ── toggle password visibility ── */
+  function togglePw(id, btn) {
+    const inp = document.getElementById(id);
+    const isText = inp.type === 'text';
+    inp.type = isText ? 'password' : 'text';
+    btn.querySelector('svg').innerHTML = isText
+      ? `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`
+      : `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+         <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+         <line x1="1" y1="1" x2="23" y2="23"/>`;
+  }
+
+  /* ── password strength ── */
+  function checkStrength(val) {
+    const bar = document.getElementById('strength-bar');
+    const fill = document.getElementById('strength-fill');
+    if (!val) { bar.classList.remove('visible'); return; }
+    bar.classList.add('visible');
+    let score = 0;
+    if (val.length >= 8) score++;
+    if (/[A-Z]/.test(val)) score++;
+    if (/[0-9]/.test(val)) score++;
+    if (/[^A-Za-z0-9]/.test(val)) score++;
+    const colors = ['#e74c3c','#e67e22','#f1c40f','#2ecc71'];
+    fill.style.width = (score * 25) + '%';
+    fill.style.background = colors[score - 1] || '#e74c3c';
+  }
+
+  /* ── mode switch ── */
+  function switchTo(mode) {
+    const card = document.getElementById('card');
+    card.classList.remove('ready');
+    card.classList.add('switching');
+
+    setTimeout(() => {
+      document.getElementById('login-view').style.display    = mode === 'login'    ? '' : 'none';
+      document.getElementById('register-view').style.display = mode === 'register' ? '' : 'none';
+
+      // re-trigger field animations
+      document.querySelectorAll('#' + mode + '-view .field').forEach(f => {
+        f.style.animation = 'none';
+        f.offsetHeight;
+        f.style.animation = '';
+      });
+
+      card.classList.remove('switching');
+      card.classList.add('ready');
+    }, 280);
+  }
+
+  /* ── handlers (stub) ── */
+  function handleLogin() {
+    const email = document.getElementById('login-email').value.trim();
+    const pass  = document.getElementById('login-pass').value;
+    if (!email || !pass) { shake(); return; }
+    // your login logic here
+    console.log('Login:', email);
+  }
+
+  function handleRegister() {
+    const name  = document.getElementById('reg-name').value.trim();
+    const email = document.getElementById('reg-email').value.trim();
+    const p1    = document.getElementById('reg-pass').value;
+    const p2    = document.getElementById('reg-pass2').value;
+    if (!name || !email || !p1 || !p2) { shake(); return; }
+    if (p1 !== p2) {
+      document.getElementById('reg-pass2').style.borderColor = 'rgba(231,76,60,0.7)';
+      setTimeout(() => document.getElementById('reg-pass2').style.borderColor = '', 1500);
+      return;
+    }
+    // your register logic here
+    console.log('Register:', name, email);
+  }
+
+  function shake() {
+    const card = document.getElementById('card');
+    card.animate([
+      { transform: 'translateX(0)' },
+      { transform: 'translateX(-7px)' },
+      { transform: 'translateX(7px)' },
+      { transform: 'translateX(-5px)' },
+      { transform: 'translateX(5px)' },
+      { transform: 'translateX(0)' }
+    ], { duration: 360, easing: 'ease-in-out' });
+  }
+</script>
+<script>
+  const API = 'http://localhost:5000/api';
+
+  async function handleLogin() {
+    const email = document.getElementById('login-email').value.trim();
+    const pass  = document.getElementById('login-pass').value;
+    if (!email || !pass) { shake(); return; }
+    try {
+      const res  = await fetch(`${API}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password: pass })
+      });
+      const data = await res.json();
+      if (!res.ok) { alert(data.message); shake(); return; }
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      window.location.href = 'index.html';
+    } catch { alert('Server error'); }
+  }
+
+  async function handleRegister() {
+    const name = document.getElementById('reg-name').value.trim();
+    const email= document.getElementById('reg-email').value.trim();
+    const p1   = document.getElementById('reg-pass').value;
+    const p2   = document.getElementById('reg-pass2').value;
+    if (!name || !email || !p1 || !p2) { shake(); return; }
+    if (p1 !== p2) {
+      document.getElementById('reg-pass2').style.borderColor = 'rgba(231,76,60,0.7)';
+      setTimeout(() => document.getElementById('reg-pass2').style.borderColor = '', 1500);
+      return;
+    }
+    try {
+      const res  = await fetch(`${API}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password: p1 })
+      });
+      const data = await res.json();
+      if (!res.ok) { alert(data.message); shake(); return; }
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      window.location.href = 'index.html';
+    } catch { alert('Server error'); }
+  }
+</script>
+</body>
+</html>
